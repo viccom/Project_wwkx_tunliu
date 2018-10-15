@@ -1,4 +1,4 @@
-﻿COMMENT,name,description,unit,rw,data type,FC,dbnum,start addr,pos,rate,value type
+COMMENT,name,description,unit,rw,data type,FC,dbnum,start addr,pos,rate,value type
 INPUT,I0.0,1#循环泵变频运行,,RO,bool,I,0,0,0,1,bool
 INPUT,I0.1,2#循环泵变频运行,,RO,bool,I,0,0,1,1,bool
 INPUT,I0.2,循环泵故障,,RO,bool,I,0,0,2,1,bool

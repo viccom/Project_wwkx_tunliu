@@ -93,18 +93,18 @@ function app:start()
 				if output == v.name then
 					self._log:notice("this is target tagname: ", v.name)
 					if not s7client:Connected() then
-						self._log:trace(devsn.." 连接断开!")
+						self._log:info(devsn.." 连接断开!")
 						s7dev:fire_event(event.LEVEL_FATAL, event.EVENT_COMM, sn.."/".."连接断开!", {os_time = os.time(), time=now})
 					else
 						if v.dt ~= "float" then
 							value = math.ceil(value)
 						end
-						self._log:info("Start set value:", tonumber(value))
+						self._log:info("Start set value:", value)
 						local str = string.pack(">I2", tonumber(value))
 						local data = s7.UserData.new(str, 2)
 						self._log:info("hexdata:", basexx.to_hex(str))
 						-- WriteArea(int Area, int DBNumber, int Start, int Amount, int WordLen, void *pUsrData);
-						self._log:info("FCFCFCFC:::", v.fc)
+						self._log:info("FCFCFCFC:::", v.fc, v.dt)
 						local tag_S7AreaID = nil
 						local tag_S7WordLen = s7.S7WordLen.Word
 						local tag_S7Addr = v.saddr
@@ -206,7 +206,7 @@ function app:start()
 		for i, v in ipairs(_points) do
 			if v.dt ~= "string" then
 				local item = s7.TS7DataItem.new()
-				-- self._log:info(i, v.name, 'len:', _dt_len_map[v.dt])
+				-- self._log:info(i, v.name, 'rate:', v.rate)
 				local data = s7.UserData.new(_dt_len_map[v.dt])
 				item.Start = v.saddr
 				item.WordLen = s7.S7WordLen.Word
@@ -246,6 +246,7 @@ function app:start()
 					dataobj["item"] = item
 					dataobj["data"] = data
 					dataobj["tagname"] = v.name
+					dataobj["rate"] = v.rate
 					dataobj["format"] = _dt_format[v.dt]
 					dataobj["bytelen"] =  _byte_len_map[v.dt] * _dt_len_map[v.dt]
 					data_items[#data_items + 1] = dataobj
@@ -255,6 +256,7 @@ function app:start()
 					dataobj["item"] = item
 					dataobj["data"] = data
 					dataobj["tagname"] = v.name
+					dataobj["rate"] = v.rate
 					dataobj["format"] = _dt_format[v.dt]
 					dataobj["bytelen"] =  _byte_len_map[v.dt] * _dt_len_map[v.dt]
 					data_items[#data_items + 1] = dataobj
@@ -268,7 +270,7 @@ function app:start()
 		local plc_rack = tonumber(dev.rack)
 		local plc_slot = tonumber(dev.slot)
         --- 生成设备的序列号
-        local dev_sn = sys_id .. "." .. self._name .. "." .. dev.sn
+        local dev_sn = sys_id .. ".tunliu_" .. self._name .. "." .. dev.sn
         --- 生成设备对象
         local meta = self._api:default_meta()
         if (dev.name~= nil) then
@@ -341,7 +343,7 @@ function app:run(tms)
 		if not s7client:Connected() then
 			s7dev:fire_event(event.LEVEL_FATAL, event.EVENT_COMM, devsn.."连接断开!", {os_time = os.time(), time=now}, os.time())
 			local connect_ret = s7client:Connect()
-			self._log:trace("info:",s7.CliErrorText(connect_ret))
+			self._log:info("info:",s7.CliErrorText(connect_ret))
 			dev.s7client = s7client
 		else
 			self._log:info("s7clients7", s7client:Connected())
@@ -361,7 +363,7 @@ function app:run(tms)
 						-- self._log:info("data hex:"..i, basexx.to_hex(v["data"]:str(v["bytelen"])))
 						local val, index = string.unpack(v["format"], v["data"]:str(v["bytelen"]))
 						-- self._log:info(v["tagname"].." data:"..i, val)
-						s7dev:set_input_prop(v["tagname"], "value", val, self._sys:time(), 0)
+						s7dev:set_input_prop(v["tagname"], "value", val*v["rate"], self._sys:time(), 0)
 					end
 				end
 			end
@@ -369,7 +371,7 @@ function app:run(tms)
 		-- dev:set_input_prop('tag1', "value", math.random())
 	end
 
-	return 10000 --下一采集周期为10秒
+	return 1000 --下一采集周期为10秒
 end
 
 --- 返回应用对象
