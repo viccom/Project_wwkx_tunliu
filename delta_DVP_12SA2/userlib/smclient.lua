@@ -32,7 +32,7 @@ local function tcp_read_response(devaddr, fc, reqlen, timeout)
                 if basexx.to_hex(_rethead) == rightstr then
                     local protocol_len = string.unpack('>I1', string.sub(ret1, 9, 10))
                     local ret2 = string.sub(ret1, 10)
-                    if ret2 then
+                    if ret2~=nil then
                         if #ret2 >= protocol_len then
                             return true, ret1
                         else
@@ -60,7 +60,7 @@ local function tcp_write_response(msglen, timeout)
         if ret1~=nil then
             if basexx.to_hex(ret1) == "06" then
                 local ret2 = sock:read(4, timeout)
-                if ret2 then
+                if ret2~=nil then
                     if #ret2 == 4 then
                         return true, ret1 .. ret2
                     else

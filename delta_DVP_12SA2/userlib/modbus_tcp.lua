@@ -32,6 +32,19 @@ local _dt_len_map = {
     double = 4
 }
 
+local _byte_len_map = {
+    int8 = 1,
+    uint8 = 1,
+    int16 = 2,
+    uint16 = 2,
+    int32 = 4,
+    uint32 = 4,
+    int64 = 8,
+    uint64 = 8,
+    float = 4,
+    double = 8
+}
+
 local big_dt_format = {
     int8 = '>i1',
     uint8 = '>I1',
@@ -77,7 +90,7 @@ _M["01"]._decode = function(response_mes, inputs)
     local rdata_set = {}
     for p, q in ipairs(inputs) do
         local _pos = q.saddr - start_reg + 1
-        local _val = string.sub(datastr, _pos, _pos)
+        local _val = tonumber(string.sub(datastr, _pos, _pos))
         table.insert(rdata_set, _val)
     end
 
@@ -104,7 +117,7 @@ _M["02"]._decode = function(response_mes, inputs)
     local rdata_set = {}
     for p, q in ipairs(inputs) do
         local _pos = q.saddr - start_reg + 1
-        local _val = string.sub(datastr, _pos, _pos)
+        local _val = tonumber(string.sub(datastr, _pos, _pos))
         table.insert(rdata_set, _val)
     end
 
@@ -186,6 +199,17 @@ _M["06"] = {}
 -- 06功能码发送报文组合，地址，寄存器名称，开始地址，长度
 _M["06"]._encode = function(addr, fc, startnum, value)
     local pack_bin =  string.pack(">I6", 0) .. string.pack(">I1", addr) .. string.pack(">I1", fc) .. string.pack(">I2", startnum) .. string.pack(">I2", value)
+    return pack_bin
+end
+
+_M["16"] = {}
+-- 06功能码发送报文组合，地址，寄存器名称，开始地址，长度
+_M["16"]._encode = function(addr, fc, startnum, datatype, value)
+    -- log.info("16 FC::", addr, fc, startnum, datatype, value)
+    local regnum = _dt_len_map[datatype]
+    local datalen = regnum * 2
+    local valuebin = string.pack(big_dt_format[datatype], value)
+    local pack_bin =  string.pack(">I6", 0) .. string.pack(">I1", addr) .. string.pack(">I1", 16) .. string.pack(">I2", startnum) .. string.pack(">I2", regnum) .. string.pack(">I1", datalen) .. valuebin
     return pack_bin
 end
 
