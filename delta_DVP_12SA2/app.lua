@@ -324,10 +324,6 @@ function app:run(tms)
 			if not r then
                 local resp = tostring(pdu)
                 self._log:notice("^^^^^^^^^^^^^^^^^^^^^^",devsn, resp)
-                self._log:notice("-----------",string.find(resp, 'Serial read timeout'))
-                self._log:notice("-----------",string.find(resp, 'socket: disconnect'))
-                self._log:notice("-----------",string.find(resp, 'Error: socket'))
-                self._log:notice("-----------",string.find(resp, '读取超时'))
                 if string.find(resp, 'Serial read timeout') then
                     self._log:debug("0", devsn .."连接断开")
                     stat:inc('link_error', 1)
