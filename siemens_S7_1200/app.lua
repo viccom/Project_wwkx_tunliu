@@ -88,13 +88,21 @@ function app:start()
             local s7client = self._devsyy[sn][3]
             local outputs = self._devsyy[sn][4]
 			local devsn = self._devsyy[sn][5]
+			local now = self._sys:time()
 			for i, v in ipairs(outputs) do
 				-- self._log:notice("ouput name: ", v.name)
 				if output == v.name then
 					self._log:notice("this is target tagname: ", v.name)
 					if not s7client:Connected() then
-						self._log:info(devsn.." 连接断开!")
-						s7dev:fire_event(event.LEVEL_FATAL, event.EVENT_COMM, sn.."/".."连接断开!", {os_time = os.time(), time=now})
+						if not s7dev._s7link_error then
+							self._log:info(devsn.." 连接断开!")
+							s7dev:fire_event(event.LEVEL_FATAL, event.EVENT_COMM, devsn.."/".."连接断开!", {os_time = os.time(), time=now})
+							s7dev._s7link_error = true
+							s7dev._s7link_error_time = now
+						elseif (now - s7dev._s7link_error_time) > 3600 then
+							s7dev:fire_event(event.LEVEL_FATAL, event.EVENT_COMM, devsn.."/".."连接断开!", {os_time = os.time(), time=now})
+						end
+						
 					else
 						if v.dt ~= "float" then
 							value = math.ceil(value)
@@ -340,8 +348,26 @@ function app:run(tms)
 		local devsn = dev.devsn
 		local s7stat = dev.stat
 		local items_g = dev.items_g
+		local now = self._sys:time()
 		if not s7client:Connected() then
-			s7dev:fire_event(event.LEVEL_FATAL, event.EVENT_COMM, devsn.."连接断开!", {os_time = os.time(), time=now}, os.time())
+			if not s7dev._s7link_error then
+				self._log:info(devsn.." 连接断开!")
+				s7dev:fire_event(event.LEVEL_FATAL, event.EVENT_COMM, devsn.."/".."连接断开!", {os_time = os.time(), time=now})
+				s7dev._s7link_error = true
+				s7dev._s7link_error_time = now
+			elseif (now - s7dev._s7link_error_time) > 3600 then
+				s7dev:fire_event(event.LEVEL_FATAL, event.EVENT_COMM, devsn.."/".."连接断开!", {os_time = os.time(), time=now})
+			end
+			for _, g in ipairs(items_g) do
+				
+				local items = g[1]
+				local data_items = g[2]
+				for i, v in ipairs(data_items) do
+					local lastvalue = s7dev:get_input_prop(v["tagname"], "value")
+					s7dev:set_input_prop(v["tagname"], "value", lastvalue, self._sys:time(), 1)
+				end
+			end
+
 			local connect_ret = s7client:Connect()
 			self._log:info("info:",s7.CliErrorText(connect_ret))
 			dev.s7client = s7client
@@ -358,7 +384,7 @@ function app:run(tms)
 					self._log:info(s7.CliErrorText(ret))
 				end
 				for i, v in ipairs(data_items) do
-					-- self._log:info("Item return:"..i, v["item"].Result)
+					-- self._log:info("Item return:"..i, v["item"].Area, v["item"].Start, v["item"].WordLen, v["item"].Result)
 					if v["item"].Result == 0 then
 						-- self._log:info("data hex:"..i, basexx.to_hex(v["data"]:str(v["bytelen"])))
 						local val, index = string.unpack(v["format"], v["data"]:str(v["bytelen"]))
@@ -367,6 +393,7 @@ function app:run(tms)
 					end
 				end
 			end
+
 		end
 		-- dev:set_input_prop('tag1', "value", math.random())
 	end
