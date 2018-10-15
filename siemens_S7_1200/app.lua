@@ -153,7 +153,6 @@ function app:start()
 							self._log:info(v.name.." Write successful", r_ret)
 							s7dev:fire_event(event.LEVEL_INFO, event.EVENT_COMM, sn.."/"..v.name.."/".."设置数值成功!", {os_time = os.time(), time=now})
 							s7dev:set_input_prop_emergency(v.name, "value", value, self._sys:time(), 0)
-							-- 131	0	152	1	1	userdata: 0x15fc730
 						end
 					end
 				end
@@ -359,7 +358,6 @@ function app:run(tms)
 				s7dev:fire_event(event.LEVEL_FATAL, event.EVENT_COMM, devsn.."/".."连接断开!", {os_time = os.time(), time=now})
 			end
 			for _, g in ipairs(items_g) do
-				
 				local items = g[1]
 				local data_items = g[2]
 				for i, v in ipairs(data_items) do
