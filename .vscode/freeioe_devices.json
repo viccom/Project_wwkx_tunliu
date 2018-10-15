@@ -1,0 +1,25 @@
+{
+    "version": 2,
+    "auth_code": "123456789",
+    "devices": [
+        {
+            "name": "Device1",
+            "desc": "Device authed by private auth code",
+            "host": "192.168.0.245",
+            "port": 8818,
+            "sn": "",
+            "user": "admin",
+            "password": "admin1"
+            
+        },
+        {
+            "name": "Device2",
+            "desc": "Device authed by username and password",
+            "host": "192.168.0.245",
+            "port": 8818,
+            "sn": "",
+            "user": "admin",
+            "password": "admin1"
+        }
+    ]
+}
