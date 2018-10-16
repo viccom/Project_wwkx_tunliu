@@ -4,9 +4,9 @@ INPUT,M500,有无定时,,int16,RO,int16,2,2548,1
 INPUT,M580,六日定时状态,,int16,RO,int16,2,2628,1
 INPUT,M581,工日定时状态,,int16,RO,int16,2,2629,1
 INPUT,M65,有无热量计算,,int16,RO,int16,2,2113,1
-INPUT,M700,位备用1,,int16,读/写,int16,2,2748,1
-INPUT,M701,位备用2,,int16,读/写,int16,2,2749,1
-INPUT,M702,位备用3,,int16,读/写,int16,2,2750,1
+INPUT,M700,位备用1,,int16,RW,int16,2,2748,1
+INPUT,M701,位备用2,,int16,RW,int16,2,2749,1
+INPUT,M702,位备用3,,int16,RW,int16,2,2750,1
 INPUT,D3,试验参数5,℃d,int16,RO,float,3,4099,0.1
 INPUT,D4,每天耗热量,GJ,int16,RO,float,3,4100,0.1
 INPUT,D5,每度日耗热量,GJ/℃d,int16,RO,float,3,4101,0.1

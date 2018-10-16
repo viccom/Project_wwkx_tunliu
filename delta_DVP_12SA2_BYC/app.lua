@@ -221,7 +221,7 @@ function app:start()
 
         -- local ouputs = devinfo.outputs
         --- 生成设备的序列号
-        local dev_sn = sys_id.. ".tunliu_" .. self._name .. "." .. dev.sn
+        local dev_sn = sys_id .. "." .. dev.name .. "." .. dev.sn
         --- 生成设备对象
         local meta = self._api:default_meta()
         if (dev.name ~= nil) then
