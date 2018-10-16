@@ -175,7 +175,7 @@ function app:start()
         -- self._log:notice("-------------",dev.sn, dev.name, dev.addr)
         --- 加载CSV点表并分析
         csv_tpl.init(self._sys:app_dir())
-        local tplfile = dev.tpl or "tpl1"
+        local tplfile = dev.tpl or "byc"
         local tpl, err = csv_tpl.load_tpl(tplfile)
         local _points = {}
         local new_inputs = nil
@@ -221,7 +221,7 @@ function app:start()
 
         -- local ouputs = devinfo.outputs
         --- 生成设备的序列号
-        local dev_sn = sys_id .. ".tunliu_" .. self._name .. "." .. dev.sn
+        local dev_sn = sys_id.. ".tunliu_" .. self._name .. "." .. dev.sn
         --- 生成设备对象
         local meta = self._api:default_meta()
         if (dev.name ~= nil) then
