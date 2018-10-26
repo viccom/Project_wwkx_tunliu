@@ -128,7 +128,7 @@ function app:start()
                         self._log:info(v.name .. '-下置-接收', basexx.to_hex(pdu))
                         --- 统计收到数据
                         stat:inc('packets_in', 1)
-                        dev:set_input_prop_emergency(v.name, "value", value, self._sys:time(), 0)
+                        dev:set_input_prop_emergency(v.name, "value", tonumber(value), self._sys:time(), 0)
                         self._log:info(v.name .. " Write successful")
                     end
                 end
