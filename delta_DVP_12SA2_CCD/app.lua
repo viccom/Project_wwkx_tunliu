@@ -101,7 +101,7 @@ function app:start()
                             value = 0
                         end
                     end
-                    local msg = modbus_cmd[fc]._encode(devaddr, v.fc, v.saddr, v.vt, tonumber(value))
+                    local msg = modbus_cmd[fc]._encode(devaddr, v.fc, v.saddr, v.dt, tonumber(value)/v.rate)
                     self._log:notice("ouput mes: ", v.name, v.saddr, v.fc, v.vt, basexx.to_hex(msg))
                     local r, pdu, err = pcall(function(msg, timeout)
                         --- 发出报文

@@ -227,6 +227,7 @@ _M["06"] = {}
 -- 06功能码发送报文组合，地址，寄存器名称，开始地址，长度
 _M["06"]._encode = function(addr, fc, startnum, datatype, value)
     -- log.info("06 FC::", addr, fc, startnum, datatype, value)
+    local valuebin = string.pack(big_dt_format[datatype], value)
     local pack_bin =  string.pack(">I1", addr) .. string.pack(">I1", 6) .. string.pack(">I2", startnum) .. string.pack(">I2", value)
     return pack_bin .. string.pack("<I2", crc16(pack_bin))
 end
