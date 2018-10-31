@@ -94,7 +94,14 @@ function app:start()
                     -- end
                     self._log:info(v.name, v.desc, v.rw, v.saddr, v.fc, v.dt)
                     local fc = _register_format(tostring(v.fc))
-                    local msg = modbus_cmd[fc]._encode(devaddr, v.fc, v.saddr, v.dt, tonumber(value))
+                    if fc=='05' then
+                        if value then
+                            value = 1
+                        else
+                            value = 0
+                        end
+                    end
+                    local msg = modbus_cmd[fc]._encode(devaddr, v.fc, v.saddr, v.vt, tonumber(value))
                     self._log:notice("ouput mes: ", v.name, v.saddr, v.fc, v.vt, basexx.to_hex(msg))
                     local r, pdu, err = pcall(function(msg, timeout)
                         --- 发出报文
