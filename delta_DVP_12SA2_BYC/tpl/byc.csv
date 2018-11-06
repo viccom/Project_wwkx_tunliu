@@ -13,7 +13,7 @@ INPUT,D5,每度日耗热量,GJ/℃d,int16,RO,float,3,4101,0.1
 INPUT,D6,每度日面积耗热量,GJ/℃dS,int16,RO,float,3,4102,0.01
 INPUT,D7,前天耗热量,GJ/℃d,int16,RO,float,3,4103,0.1
 INPUT,D8,计算前天耗热量,,int16,RO,int16,3,4104,1
-INPUT,D9,累计热量低位,,uint16,RO,int16,3,4105,1
+INPUT,D9,累计热量低位,,uint16,RO,uint16,3,4105,1
 INPUT,D10,累计热量高位,,int16,RO,int16,3,4106,1
 INPUT,D11,实时外温,℃,int16,RO,float,3,4107,0.1
 INPUT,D12,换热器一次供压,m,int16,RO,float,3,4108,0.1
