@@ -394,9 +394,6 @@ function app:run(tms)
 
                 --- 对设备IO点写数
                 if data_set then                                
-                    -- mbdev._link_error = false
-                    -- mbdev._timeout_error = false
-                    -- mbdev._msg_error = false
                     for p, q in ipairs(v.inputs) do
                         -- self._log:info("NO:", p, q.name," Value:", data_set[p])
                         mbdev:set_input_prop(q.name, "value", data_set[p], now, 0)
