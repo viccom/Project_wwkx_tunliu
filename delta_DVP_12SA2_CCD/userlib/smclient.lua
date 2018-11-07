@@ -110,14 +110,7 @@ local function rtu_read_response(devaddr, fc, reqlen, timeout)
                             else
                                 return false, "检验码错误"
                             end
-                            -- log.info("all msg::", basexx.to_hex(ret1 .. ret2 .. ret3 .. ret4))
-                            -- log.info("ret3 crc::", basexx.to_hex(string.pack("<I2", crc16(ret1 .. ret2 .. ret3))))
-                            -- log.info("ret4 msg::", basexx.to_hex(ret4))
-                            -- string.pack("<I2", crc16(ret3))
-                            local ret5 = sock:read(1024, 100)
-                            while string.len(ret5) == 1024 do
-                                sock:read(1024, 100)
-                            end
+
                         else
                             local ret4 = sock:read(1024, 100)
                             while string.len(ret4) == 1024 do

@@ -327,56 +327,52 @@ function app:run(tms)
             --- pcall执行出错，产生事件
             if not r then
                 local resp = tostring(pdu)
+                local event_info = {
+                    error = resp,
+                    start_time = now,
+                    time = self._sys:time(),
+                    devaddr = devaddr,
+                    fc = fc,
+                    start_reg = devconf.start_reg,
+                    reg_len = reg_len
+                }
                 self._log:notice("^^^^^^^^^^^^^^^^^^^^^^", devsn, resp)
                 if string.find(resp, 'Serial read timeout') then
-                    self._log:debug("0", devsn .. "连接断开")
-                    stat:inc('link_error', 1)
+                    self._log:debug("0", devsn .. "返回为空")
+                    stat:inc('packets_error', 1)
                     if not mbdev._link_error then
-                        mbdev:fire_event(event.LEVEL_FATAL, event.EVENT_COMM, devsn .. "连接断开!", { os_time = os.time(), time = now })
+                        mbdev:fire_event(event.LEVEL_FATAL, event.EVENT_COMM, devsn .. "返回为空!", event_info)
                         mbdev._link_error = true
                         mbdev._link_error_time = now
                     end
                     if mbdev._link_error_time and (now - mbdev._link_error_time) > 3600 then
-                        mbdev:fire_event(event.LEVEL_FATAL, event.EVENT_COMM, devsn .. "连接断开!", { os_time = os.time(), time = now })
+                        mbdev:fire_event(event.LEVEL_FATAL, event.EVENT_COMM, devsn .. "返回为空!", event_info})
                         mbdev._link_error_time = now
                     end
 
                 elseif string.find(resp, 'socket: disconnect') or string.find(resp, 'Error: socket') then
                     self._log:debug("0", devsn .. "连接断开")
-                    stat:inc('link_error', 1)
+                    stat:inc('packets_error', 1)
                     if not mbdev._link_error then
-                        mbdev:fire_event(event.LEVEL_FATAL, event.EVENT_COMM, devsn .. "连接断开!", { os_time = os.time(), time = now })
+                        mbdev:fire_event(event.LEVEL_FATAL, event.EVENT_COMM, devsn .. "连接断开!", event_info)
                         mbdev._link_error = true
                         mbdev._link_error_time = now
                     end
                     if mbdev._link_error_time and (now - mbdev._link_error_time) > 3600 then
-                        mbdev:fire_event(event.LEVEL_FATAL, event.EVENT_COMM, devsn .. "连接断开!", { os_time = os.time(), time = now })
+                        mbdev:fire_event(event.LEVEL_FATAL, event.EVENT_COMM, devsn .. "连接断开!", event_info)
                         mbdev._link_error_time = now
-                    end
-
-                elseif string.find(resp, '读取超时') then
-                    self._log:debug("1", devsn .. '读取超时')
-                    stat:inc('timeout_error', 1)
-                    if not mbdev._timeout_error then
-                        mbdev:fire_event(event.LEVEL_ERROR, event.EVENT_COMM, devsn .. "读取超时!", { os_time = os.time(), time = now })
-                        mbdev._timeout_error = true
-                        mbdev._timeout_error_time = now
-                    end
-                    if mbdev._timeout_error_time and (now - mbdev._timeout_error_time) > 3600 then
-                        mbdev:fire_event(event.LEVEL_ERROR, event.EVENT_COMM, devsn .. "读取超时!", { os_time = os.time(), time = now })
-                        mbdev._timeout_error_time = now
                     end
 
                 else
                     self._log:warning("2", devsn .. resp, err)
-                    stat:inc('msg_error', 1)
+                    stat:inc('packets_error', 1)
                     if not mbdev._msg_error then
-                        mbdev:fire_event(event.LEVEL_ERROR, event.EVENT_COMM, devsn .. "报文错误!", { os_time = os.time(), time = now })
+                        mbdev:fire_event(event.LEVEL_ERROR, event.EVENT_COMM, devsn .. "报文错误!", event_info)
                         mbdev._msg_error = true
                         mbdev._msg_error_time = now
                     end
                     if mbdev._msg_error_time and (now - mbdev._msg_error_time) > 3600 then
-                        mbdev:fire_event(event.LEVEL_ERROR, event.EVENT_COMM, devsn .. "报文错误!", { os_time = os.time(), time = now })
+                        mbdev:fire_event(event.LEVEL_ERROR, event.EVENT_COMM, devsn .. "报文错误!", event_info)
                         mbdev._msg_error_time = now
                     end
                 end
