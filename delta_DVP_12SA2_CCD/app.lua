@@ -346,7 +346,7 @@ function app:run(tms)
                         mbdev._link_error_time = now
                     end
                     if mbdev._link_error_time and (now - mbdev._link_error_time) > 3600 then
-                        mbdev:fire_event(event.LEVEL_FATAL, event.EVENT_COMM, devsn .. "返回为空!", event_info})
+                        mbdev:fire_event(event.LEVEL_FATAL, event.EVENT_COMM, devsn .. "返回为空!", event_info)
                         mbdev._link_error_time = now
                     end
 
