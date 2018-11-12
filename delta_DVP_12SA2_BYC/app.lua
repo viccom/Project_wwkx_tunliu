@@ -95,7 +95,7 @@ function app:start()
                     self._log:info(v.name, v.desc, v.rw, v.saddr, v.fc, v.dt)
                     local fc = _register_format(tostring(v.fc))
                     if fc=='05' then
-                        if value then
+                        if math.tointeger( value ) == 1 then
                             value = 1
                         else
                             value = 0
